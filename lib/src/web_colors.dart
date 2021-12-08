@@ -1,8 +1,8 @@
 import 'dart:ui';
 
 extension WebColors on X11Colors {
-  static X11Colors of(String name) {
-    if ((name ?? '').isEmpty) {
+  static X11Colors? of(String? name) {
+    if (name == null || name.isEmpty) {
       return null;
     }
     for (final webColor in X11Colors.values) {
@@ -317,8 +317,6 @@ extension WebColors on X11Colors {
       case X11Colors.Gainsboro:
         return 'gainsboro';
     }
-
-    return null;
   }
 
   Color get color {
@@ -625,8 +623,6 @@ extension WebColors on X11Colors {
       case X11Colors.Gainsboro:
         return const Color(0xFFDCDCDC);
     }
-
-    return null;
   }
 }
 

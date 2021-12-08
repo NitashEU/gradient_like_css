@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:gradient_like_css/src/colors_and_stops.dart';
 import 'package:gradient_like_css/src/web_colors.dart';
-import 'package:tuple/tuple.dart';
 
 class CssLike {
   /// Create linear gradients with CSS-like coding.
@@ -22,21 +22,20 @@ class CssLike {
   /// The [colorStopList] argument must not be null. Colors allow web color
   /// names or color codes that start with "#". Stops allow percentage strings
   /// like "12.34%".
-  /// 
-  static LinearGradient linearGradient(
-      Object angleOrEndAlignment, List<String> colorStopList) {
+  ///
+  static LinearGradient linearGradient(Object angleOrEndAlignment, List<String> colorStopList) {
     final endAlignment = _getEndAlignment(angleOrEndAlignment);
     final colorsAndStops = _getColorsAndStops(colorStopList);
 
     return LinearGradient(
       begin: -endAlignment,
       end: endAlignment,
-      colors: colorsAndStops.item1,
-      stops: colorsAndStops.item2,
+      colors: colorsAndStops.colors,
+      stops: colorsAndStops.stops,
     );
   }
 
-  static Alignment _getEndAlignment(Object angleOrEndAlignment) {
+  static Alignment _getEndAlignment(Object? angleOrEndAlignment) {
     if (angleOrEndAlignment == null) {
       return Alignment.bottomCenter;
     } else if (angleOrEndAlignment is num) {
@@ -51,19 +50,18 @@ class CssLike {
     }
   }
 
-  static Tuple2<List<Color>, List<double>> _getColorsAndStops(
-      List<String> colorStopList) {
+  static ColorsAndStops _getColorsAndStops(List<String> colorStopList) {
     final colors = <Color>[];
     final stops = <double>[];
 
-    if ((colorStopList ?? const <String>[]).isEmpty) {
+    if (colorStopList.isEmpty) {
       throw const FormatException(
           // ignore: lines_longer_than_80_chars
           'The "colorStopList" argument can be set up to three, separated by spaces, such as "yellow 40% 60%".');
     }
 
     for (final param in colorStopList) {
-      String colorCode, percentage1, percentage2;
+      String? colorCode, percentage1, percentage2;
 
       final splitParam = param.split(' ');
       if (splitParam.length > 0) {
@@ -75,7 +73,7 @@ class CssLike {
       if (splitParam.length > 2) {
         percentage2 = splitParam[2];
       }
-      if (splitParam.length == 0 || splitParam.length > 3) {
+      if (splitParam.length == 0 || splitParam.length > 3 || colorCode == null) {
         throw const FormatException(
             // ignore: lines_longer_than_80_chars
             'The "colorStopList" argument can be set up to three, separated by spaces, such as "yellow 40% 60%".');
@@ -87,8 +85,12 @@ class CssLike {
         colors.add(color);
         stops.add(stop1);
       } else {
-        colors..add(color)..add(color);
-        stops..add(stop1)..add(_percentageStringToStop(percentage2));
+        colors
+          ..add(color)
+          ..add(color);
+        stops
+          ..add(stop1)
+          ..add(_percentageStringToStop(percentage2));
       }
     }
 
@@ -111,21 +113,19 @@ class CssLike {
         final separation = (nextStop - previousStop) / (range + 1);
 
         for (var i = 0; i < range; i++) {
-          stops[index + i] = double.parse(
-              (previousStop + separation * (i + 1)).toStringAsPrecision(8));
+          stops[index + i] = double.parse((previousStop + separation * (i + 1)).toStringAsPrecision(8));
         }
       }
     });
-    return Tuple2<List<Color>, List<double>>(colors, stops);
+    return ColorsAndStops(colors, stops);
   }
 
-  static double _percentageStringToStop(String percentageString) {
-    if ((percentageString ?? '').isEmpty) {
+  static double _percentageStringToStop(String? percentageString) {
+    if (percentageString == null || percentageString.isEmpty) {
       return double.nan;
     }
     if (!percentageString.endsWith('%')) {
-      throw const FormatException(
-          'Bad stop format (Allow percentage strings like "12.34%").');
+      throw const FormatException('Bad stop format (Allow percentage strings like "12.34%").');
     }
 
     try {
@@ -133,8 +133,7 @@ class CssLike {
 //      assert(0.0 <= stop && stop <= 1.0);
       return stop;
     } on Exception {
-      throw const FormatException(
-          'Bad stop format (Allow percentage strings like "12.34%").');
+      throw const FormatException('Bad stop format (Allow percentage strings like "12.34%").');
     }
   }
 
