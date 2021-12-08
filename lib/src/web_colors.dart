@@ -15,6 +15,8 @@ extension WebColors on X11Colors {
 
   String get name {
     switch (this) {
+      case X11Colors.Transparent:
+        return 'transparent';
       // Pink colors
       case X11Colors.MediumVioletRed:
         return 'mediumvioletred';
@@ -321,6 +323,8 @@ extension WebColors on X11Colors {
 
   Color get color {
     switch (this) {
+      case X11Colors.Transparent:
+        return const Color(0x00000000);
       // Pink colors
       case X11Colors.MediumVioletRed:
         return const Color(0xFFC71585);
@@ -628,6 +632,8 @@ extension WebColors on X11Colors {
 
 // ignore_for_file: constant_identifier_names
 enum X11Colors {
+  Transparent,
+
   // Pink colors
   MediumVioletRed,
   DeepPink,
