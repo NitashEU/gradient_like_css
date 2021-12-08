@@ -146,7 +146,7 @@ class CssLike {
   }
 
   static int _makeHexCode(String code) {
-    final hexColorCodeExp = RegExp(r'^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$');
+    final hexColorCodeExp = RegExp(r'^#([A-Fa-f0-9]{8}|[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$');
     if (hexColorCodeExp.allMatches(code).length != 1) {
       throw const FormatException(
           // ignore: lines_longer_than_80_chars
@@ -154,7 +154,17 @@ class CssLike {
     }
 
     String hexCode;
-    if (code.length == 4) {
+    if (code.length == 9) {
+      final a1 = code[1];
+      final a2 = code[2];
+      final r1 = code[3];
+      final r2 = code[4];
+      final g1 = code[5];
+      final g2 = code[6];
+      final b1 = code[7];
+      final b2 = code[8];
+      hexCode = '0x$a1$a2$r1$r2$g1$g2$b1$b2';
+    } else if (code.length == 4) {
       final r = code[1];
       final g = code[2];
       final b = code[3];
